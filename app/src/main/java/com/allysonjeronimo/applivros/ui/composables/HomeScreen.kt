@@ -1,7 +1,7 @@
 package com.allysonjeronimo.applivros.ui.composables
 
-import android.media.Image
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +13,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -20,18 +21,18 @@ import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.allysonjeronimo.applivros.R
+import com.allysonjeronimo.applivros.model.Book
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview(showBackground = true)
-fun HomeScreen(){
+fun HomeScreen(
+    books: List<Book>,
+    onBookClick: (Book) -> Unit
+){
     Scaffold(
         topBar = {
             TopAppBar(
@@ -59,48 +60,45 @@ fun HomeScreen(){
             .padding(it)
             .verticalScroll(rememberScrollState())){
 
-            BookCard(title = "Contos de Lovecraft", author = "H.P Lovecraft", image = painterResource(
-                id = R.drawable.book_01
-            ))
-
-            BookCard(title = "O Hobbit", author = "Tolkien", image = painterResource(
-                id = R.drawable.book_03
-            ))
-
-            BookCard(title = "Os Filhos de Hurin", author = "Tolkien", image = painterResource(
-                id = R.drawable.book_05
-            ))
+            for(book in books){
+                BookCard(
+                    book = book,
+                    onClick = { onBookClick(book) }
+                )
+            }
         }
     }
 }
 
 @Composable
 fun BookCard(
-    title: String,
-    author: String,
-    image: Painter
+    book: Book,
+    onClick: (Book) -> Unit
 ){
     Card(modifier = Modifier
+        .clickable {
+            onClick(book)
+        }
         .fillMaxWidth()
         .padding(6.dp)){
         Row(){
             Image(
-                painter = image,
+                painter = painterResource(id = R.drawable.book_01),
                 contentDescription = null,
                 modifier = Modifier.height(120.dp)
             )
             Column(modifier = Modifier.padding(6.dp)){
                 Text(
-                    title,
-                    fontSize = 26.sp,
+                    book.title,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.titleLarge
                 )
                 Text(
-                    author,
-                    fontSize = 18.sp,
+                    book.author,
                     maxLines = 1,
-                    color = Color.Gray
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
 
